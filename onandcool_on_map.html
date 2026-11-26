@@ -4,12 +4,36 @@
 <section><h2>우리동네 쉼터 찾기</h2><input id="query" placeholder="주소 또는 시설명"><button id="search">주소·시설 검색</button><div id="results"></div><div id="map"></div><button id="locate">내 위치 찾기</button><p id="mapStatus" role="status">지도 연결 중</p><small>보라색: 공식 겸용쉼터 · 주황색: 무더위 · 파란색: 한파 · 초록색: 생활쉼터</small></section>
 <section><h2>쉼터 목록</h2><select id="filter"><option value="">전체</option><option>공식 겸용쉼터</option><option>무더위쉼터</option><option>한파쉼터</option><option>생활쉼터</option></select><p id="count"></p><div id="list"></div><small>공식 자료: 대구광역시 남구, 2026-03-20 기준. 현재 운영 여부는 방문 전 확인하세요.</small></section>
 <section id="register"><h2>주민 참여 · 쉼터 등록</h2><p>지도에서 위치를 선택하거나 주소를 검색한 뒤 등록하세요.</p><p id="position">위치 미선택</p><form id="form"><label>시설명<input id="name" required maxlength="60"></label><label>유형<select id="category"><option>생활쉼터</option><option>무더위쉼터</option><option>한파쉼터</option></select></label><label>주소<input id="address" maxlength="200"></label><label>시설 소개<textarea id="description" maxlength="300"></textarea></label><label>운영시간<input id="hours" maxlength="150"></label><label>휴무일<input id="closedDays" maxlength="100"></label><label>시설 대표 전화번호<input id="phone" maxlength="30"></label><label>이용 대상<input id="target" maxlength="100"></label><label>이용요금<input id="fee" maxlength="100"></label><label>편의시설<input id="facilities" maxlength="200"></label><small>개인정보는 등록하지 마세요. 주민 등록 정보는 공식 지정 정보가 아닙니다.</small><button id="save" disabled>쉼터 등록</button></form><p id="dbStatus" role="status"></p></section><section><h2>기후위기, 함께 대비해요!</h2>
+<h3>
+<h2>기후위기, 함께 대비해요!</h2>
+
 <h3>☀️ 폭염 대비</h3>
-<ul><li>충분한 수분 섭취와 한낮 야외활동 자제</li><li>가까운 무더위쉼터 이용</li><li>주변 이웃의 건강과 안부 확인</li></ul>
+<ul>
+  <li>충분한 수분 섭취와 한낮 야외활동 자제</li>
+  <li>가까운 무더위쉼터 이용</li>
+  <li>주변 이웃의 건강과 안부 확인</li>
+</ul>
+
 <h3>❄️ 한파 대비</h3>
-<ul><li>외출 시 방한용품 착용 및 체온 유지</li><li>가까운 한파쉼터 이용</li><li>한파에 취약한 이웃에게 관심 갖기</li></ul>
+<ul>
+  <li>외출 시 방한용품 착용 및 체온 유지</li>
+  <li>가까운 한파쉼터 이용</li>
+  <li>한파에 취약한 이웃에게 관심 갖기</li>
+</ul>
+
 <h3>도움이 필요하신가요?</h3>
-<p>쉼터 및 복지서비스 문의<br>대명사회복지관 <a href="tel:0536571170">053-657-1170</a></p>
+
+<p>쉼터 및 복지서비스 문의<br>
+대명사회복지관
+<a href="tel:0536571170">053-657-1170</a>
+</p>
+
+<p>응급상황 발생 시
+<a href="tel:119">119</a>
+</p>
+
+<p><strong>우리 모두의 안전하고 건강한 일상을 위해 대명사회복지관이 함께합니다.</strong></p>
+
 <p>응급상황 발생 시 <a href="tel:119">119</a></p>
 <p><strong>우리 모두의 안전하고 건강한 일상을 위해 대명사회복지관이 함께합니다.</strong></p></section><section id="admin"><h2>관리자 로그인</h2><form id="adminForm"><label>이메일<input id="adminEmail" type="email" required autocomplete="username"></label><label>비밀번호<input id="adminPassword" type="password" required autocomplete="current-password"></label><button>로그인</button></form><button id="logout" hidden>관리자 로그아웃</button><p id="adminStatus" role="status"></p></section></main><footer>대명사회복지관 · 온앤쿨 케어</footer>
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=3f961190ac4e1056a0014a2adc150499&libraries=services&autoload=false"></script>
