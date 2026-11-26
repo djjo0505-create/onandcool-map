@@ -4,26 +4,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="format-detection" content="telephone=no">
 <title>온앤쿨 ON MAP</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f4f7f6;font-family:system-ui,sans-serif;color:#183c35}
-header{background:#176b59;color:white;padding:22px}
-h1{margin:0;font-size:26px}
+header{background:#176b59;color:white;padding:24px}
+h1{margin:0;font-size:27px}
 header p{margin:8px 0 0}
 main{padding:14px;max-width:900px;margin:auto}
-#map{height:45vh;min-height:280px;border-radius:16px}
+#map{height:48vh;min-height:300px;border-radius:16px}
 button,input,select,textarea{font:inherit;padding:13px;border-radius:10px;width:100%;margin-top:8px}
 button{background:#176b59;color:white;border:0;cursor:pointer}
+button:disabled{opacity:.5}
 input,select,textarea{border:1px solid #ccd8d4;background:white}
 section{background:white;padding:16px;border-radius:16px;margin-top:14px}
 h2{font-size:19px;margin:0 0 10px}
 small{color:#62756e}
+label{display:block;font-size:14px;font-weight:600;margin-top:12px}
 #status{font-size:14px;padding:10px}
-.item{padding:12px 0;border-bottom:1px solid #eee}
+.item{padding:14px 0;border-bottom:1px solid #eee;cursor:pointer}
+.item p{margin:5px 0;font-size:14px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;padding:12px 0}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:4px}
 footer{text-align:center;padding:22px;font-size:13px}
+.detail{font-size:13px;line-height:1.7;overflow-wrap:anywhere}
+.detail h3{margin:0 0 8px}
 </style>
 </head>
 <body>
@@ -32,30 +40,82 @@ footer{text-align:center;padding:22px;font-size:13px}
 <p>우리동네 기후안전지도</p>
 <p>대명사회복지관 · 온앤쿨 케어</p>
 </header>
+
 <main>
 <div id="status">데이터베이스 연결 중...</div>
+
+<div class="legend">
+<span><i class="dot" style="background:#f97316"></i>무더위쉼터</span>
+<span><i class="dot" style="background:#2563eb"></i>한파쉼터</span>
+<span><i class="dot" style="background:#16a34a"></i>생활쉼터</span>
+</div>
+
 <div id="map"></div>
 <button id="locate">📍 내 위치 찾기</button>
+
 <section>
 <h2>우리동네 쉼터 등록</h2>
-<small>지도에서 등록할 장소를 먼저 눌러주세요.</small>
+<small>지도에서 등록할 장소를 먼저 선택해주세요.</small>
 <p id="position">선택된 위치 없음</p>
+
 <form id="form">
-<input id="name" maxlength="60" placeholder="장소 이름" required>
+<label for="name">시설명 *</label>
+<input id="name" maxlength="60" placeholder="시설 또는 장소 이름" required>
+
+<label for="category">쉼터 유형 *</label>
 <select id="category">
 <option>무더위쉼터</option>
 <option>한파쉼터</option>
 <option>생활쉼터</option>
 </select>
-<textarea id="description" maxlength="300" placeholder="장소 설명 (개인정보 입력 금지)"></textarea>
+
+<label for="address">상세 주소</label>
+<input id="address" maxlength="200" placeholder="도로명 또는 지번 주소">
+
+<label for="description">시설 소개</label>
+<textarea id="description" maxlength="300" placeholder="어떤 장소인지 설명해주세요."></textarea>
+
+<label for="hours">운영시간</label>
+<input id="hours" maxlength="150" placeholder="예: 평일 09:00~18:00">
+
+<label for="closedDays">휴무일</label>
+<input id="closedDays" maxlength="100" placeholder="예: 토요일, 일요일, 공휴일">
+
+<label for="phone">시설 대표 전화번호</label>
+<input id="phone" maxlength="30" placeholder="시설의 공개된 대표번호">
+
+<label for="target">이용 대상</label>
+<input id="target" maxlength="100" placeholder="예: 지역주민 누구나">
+
+<label for="fee">이용요금</label>
+<select id="fee">
+<option value="">확인 필요</option>
+<option>무료</option>
+<option>유료</option>
+<option>시설 문의 필요</option>
+</select>
+
+<label for="facilities">편의시설</label>
+<textarea id="facilities" maxlength="200" placeholder="예: 에어컨, 난방기, 의자, 화장실"></textarea>
+
+<p><small>개인 전화번호, 개인 주거지 등 개인정보는 등록하지 마세요.</small></p>
+
 <button id="save" disabled>쉼터 등록하기</button>
 </form>
 </section>
+
 <section>
 <h2>우리동네 쉼터 목록</h2>
-<small>주민이 등록한 장소는 공식 지정 쉼터와 다를 수 있습니다.</small>
+<select id="filter">
+<option value="">전체 쉼터 보기</option>
+<option>무더위쉼터</option>
+<option>한파쉼터</option>
+<option>생활쉼터</option>
+</select>
+<p><small>주민 등록 정보는 공식 지정 쉼터와 다를 수 있습니다.</small></p>
 <div id="list">등록 정보를 불러오는 중...</div>
 </section>
+
 <section>
 <h2>기후위기 행동 안내</h2>
 <p>☀️ 폭염 시 물을 충분히 마시고 야외활동을 줄여주세요.</p>
@@ -64,7 +124,12 @@ footer{text-align:center;padding:22px;font-size:13px}
 <p>☎️ 복지상담은 129</p>
 </section>
 </main>
-<footer>대명사회복지관 | 온앤쿨 케어<br>기능 테스트 버전</footer>
+
+<footer>
+대명사회복지관 | 온앤쿨 케어<br>
+우리동네 기후안전지도 · 테스트 버전
+</footer>
+
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
 import {getAuth,signInAnonymously} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
@@ -78,24 +143,41 @@ storageBucket:"onandcool-map.firebasestorage.app",
 messagingSenderId:"636473701395",
 appId:"1:636473701395:web:11ea75032a3cb4be7c7be6"
 });
+
 const auth=getAuth(app);
 const db=getFirestore(app);
 const $=id=>document.getElementById(id);
+
 const map=L.map("map").setView([35.835,128.575],14);
+
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
 maxZoom:19,
 attribution:"&copy; OpenStreetMap contributors"
 }).addTo(map);
+
 const markers=L.layerGroup().addTo(map);
+
 let selected=null;
 let pin=null;
 let userPin=null;
+let records=[];
+
+const colors={
+"무더위쉼터":"#f97316",
+"한파쉼터":"#2563eb",
+"생활쉼터":"#16a34a"
+};
+
 map.on("click",e=>{
 selected=e.latlng;
 if(pin)pin.remove();
-pin=L.circleMarker(selected,{color:"#176b59",radius:9}).addTo(map);
+pin=L.circleMarker(selected,{
+color:"#183c35",
+radius:10
+}).addTo(map);
 $("position").textContent="등록 위치 선택 완료";
 });
+
 $("locate").onclick=()=>{
 if(!navigator.geolocation){
 alert("위치 기능을 지원하지 않습니다.");
@@ -104,35 +186,111 @@ return;
 navigator.geolocation.getCurrentPosition(p=>{
 const loc=[p.coords.latitude,p.coords.longitude];
 if(userPin)userPin.remove();
-userPin=L.circleMarker(loc,{color:"blue",radius:8}).addTo(map);
+userPin=L.circleMarker(loc,{
+color:"blue",
+radius:8
+}).addTo(map);
 map.setView(loc,16);
 },()=>alert("위치 접근 권한을 확인해주세요."));
 };
-onSnapshot(collection(db,"shelters"),snapshot=>{
+
+function makeDetails(d){
+const box=document.createElement("div");
+box.className="detail";
+
+const title=document.createElement("h3");
+title.textContent=d.name;
+box.append(title);
+
+const fields=[
+["쉼터 유형",d.category],
+["시설 소개",d.description],
+["주소",d.address],
+["운영시간",d.hours],
+["휴무일",d.closedDays],
+["전화번호",d.phone],
+["이용 대상",d.target],
+["이용요금",d.fee],
+["편의시설",d.facilities]
+];
+
+fields.forEach(([label,value])=>{
+const row=document.createElement("div");
+const bold=document.createElement("strong");
+bold.textContent=label+": ";
+row.append(bold,document.createTextNode(value||"확인 필요"));
+box.append(row);
+});
+
+const source=document.createElement("p");
+source.textContent="주민 등록 정보 · 이용 전 확인 필요";
+box.append(source);
+
+return box;
+}
+
+function render(){
 markers.clearLayers();
 $("list").replaceChildren();
-if(snapshot.empty){
-$("list").textContent="아직 등록된 쉼터가 없습니다.";
+
+const filter=$("filter").value;
+const filtered=records.filter(d=>
+!filter||d.category===filter
+);
+
+if(!filtered.length){
+$("list").textContent="등록된 쉼터가 없습니다.";
 }
-snapshot.forEach(doc=>{
-const d=doc.data();
+
+filtered.forEach(d=>{
 if(!Number.isFinite(d.lat)||!Number.isFinite(d.lng))return;
-const popup=document.createElement("div");
-popup.textContent=d.name+" · "+d.category+" — "+d.description;
-L.marker([d.lat,d.lng]).addTo(markers).bindPopup(popup);
+
+const color=colors[d.category]||"#64748b";
+
+const marker=L.circleMarker([d.lat,d.lng],{
+radius:10,
+color:"#ffffff",
+weight:2,
+fillColor:color,
+fillOpacity:1
+}).addTo(markers);
+
+marker.bindPopup(makeDetails(d),{maxWidth:280});
+
 const item=document.createElement("div");
 item.className="item";
+
 const title=document.createElement("strong");
 title.textContent=d.name;
+title.style.color=color;
+
 const desc=document.createElement("p");
-desc.textContent=d.category+" | "+d.description;
-item.append(title,desc);
-item.onclick=()=>map.setView([d.lat,d.lng],17);
+desc.textContent=d.category+" | "+(d.address||"주소 확인 필요");
+
+const hours=document.createElement("p");
+hours.textContent="운영시간: "+(d.hours||"확인 필요");
+
+item.append(title,desc,hours);
+
+item.onclick=()=>{
+map.setView([d.lat,d.lng],17);
+marker.openPopup();
+$("map").scrollIntoView({behavior:"smooth"});
+};
+
 $("list").append(item);
 });
+}
+
+$("filter").onchange=render;
+
+onSnapshot(collection(db,"shelters"),snapshot=>{
+records=snapshot.docs.map(doc=>doc.data());
+render();
 },err=>{
 $("list").textContent="정보 조회 실패: "+err.code;
 });
+
 try{
 await signInAnonymously(auth);
 $("status").textContent="● 데이터베이스 연결 완료";
@@ -140,29 +298,56 @@ $("save").disabled=false;
 }catch(err){
 $("status").textContent="인증 실패: "+err.code;
 }
+
 $("form").onsubmit=async e=>{
 e.preventDefault();
-if(!selected)return alert("지도에서 위치를 선택해주세요.");
-if(!auth.currentUser)return alert("인증 연결을 확인해주세요.");
+
+if(!selected){
+return alert("지도에서 위치를 선택해주세요.");
+}
+
+if(!auth.currentUser){
+return alert("인증 연결을 확인해주세요.");
+}
+
+if(!$("name").value.trim()){
+return alert("시설명을 입력해주세요.");
+}
+
 const {lat,lng}=selected;
+
 if(lat<35.80||lat>35.88||lng<128.53||lng>128.63){
 return alert("현재 등록 가능 지역을 벗어났습니다.");
 }
+
 $("save").disabled=true;
+
 try{
 await addDoc(collection(db,"shelters"),{
 name:$("name").value.trim(),
 category:$("category").value,
 description:$("description").value.trim(),
-lat,lng,
+address:$("address").value.trim(),
+hours:$("hours").value.trim(),
+closedDays:$("closedDays").value.trim(),
+phone:$("phone").value.trim(),
+target:$("target").value.trim(),
+fee:$("fee").value,
+facilities:$("facilities").value.trim(),
+lat,
+lng,
 uid:auth.currentUser.uid,
 createdAt:serverTimestamp()
 });
+
 alert("쉼터가 등록되었습니다.");
 $("form").reset();
+
 if(pin)pin.remove();
+
 selected=null;
 $("position").textContent="선택된 위치 없음";
+
 }catch(err){
 alert("등록 실패: "+err.code);
 }finally{
@@ -172,3 +357,4 @@ $("save").disabled=false;
 </script>
 </body>
 </html>
+
